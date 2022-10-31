@@ -8,4 +8,6 @@ public interface Config {
         return "DefaultName";
     }
 
+    void setName(String name);
+
 }

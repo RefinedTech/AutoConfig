@@ -20,12 +20,34 @@ public final class ConfigInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         MethodInfo info = MethodInfo.from(method);
         switch (info.getType()) {
+            case GETTER -> {
+                Object obj = this.storage.get(info.getFullPath());
+                if (obj != null) {
+                    return obj;
+                }
+            }
+            case SETTER -> {
+                if (args == null || args.length < 1) {
+                    throw new IllegalStateException(
+                        "Setter '%s' in '%s' requires at least one argument!".formatted(
+                            method.getName(),
+                            this.clazz.getCanonicalName()
+                        )
+                    );
+                }
 
+                this.storage.set(info.getFullPath(), args[0]);
+
+                return null;
+            }
         }
 
-        Object obj = this.storage.get(info.getFullPath());
-        if (obj != null) {
-            return obj;
+        if (method.getReturnType() == Void.class) {
+            return null;
+        }
+
+        if (!method.isDefault()) {
+            return null;
         }
 
         try {

@@ -31,14 +31,20 @@ public class TestConfig {
 
         Config myConfig = Configurations.create(Config.class, "myConfig.yml", file -> new ConfigStorage(file) {
 
+            private String name = "Somebody";
+
             @Override
             public Object get(String path) {
-                return path.equals("config.name") ? "Somebody" : null;
+                return path.equals("config.name") ? this.name : null;
             }
 
             @Override
             public void set(String path, Object obj) {
+                if (!path.equals("config.name")) {
+                    return;
+                }
 
+                this.name = String.valueOf(obj);
             }
 
         });
@@ -65,6 +71,10 @@ public class TestConfig {
 
 //        System.out.println("Took: " + (end - start) / 1_000_000 + "ms");
         System.out.println("Name: " + name);
+
+        myConfig.setName("How are you?");
+
+        System.out.println("New name: " + myConfig.getName());
     }
 
 }

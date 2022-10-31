@@ -53,7 +53,7 @@ public final class MethodInfo {
         this.name = type.extractName(name);
         this.path = path;
 
-        this.fullPath = String.join(".", path) + "." + name;
+        this.fullPath = String.join(".", path) + "." + this.name;
     }
 
     public static MethodInfo from(Method method) {
